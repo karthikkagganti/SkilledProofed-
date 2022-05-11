@@ -7,11 +7,11 @@
       <div class="columns ">
         <div class="column is-three-fifths hero-body  ">
           <div class="left-align">
-            <h1 class="title is-1" style="color:#fba04d">
+            <h1 class="title" style="color:#fba04d">
               Welcome to ScaleUP!
             </h1>
             <br />
-            <h2 class="subtitle is-5" style="color:#393e5b">
+            <h2 class="subtitle" style="color:#393e5b">
               We help young talent get discovered by the<br />
               leading tech companies.
             </h2>
@@ -25,7 +25,7 @@
 
         <figure>
           <img
-            class="column  is-square is-justify-content-center mt-6 mr-6"
+            class="column"
             src="../assets/homedesign1.png"
           />
         </figure>
@@ -125,5 +125,17 @@ export default {
 }
 a.button {
   margin-left: -12px;
+}
+img.column {
+  width: 60%;
+  margin-left: 60px;
+}
+@media screen and (max-width: 50em) {
+.left-align {
+  margin-left: 20px;
+}
+h2.subtitle {
+  font-size: 16px;
+}
 }
 </style>

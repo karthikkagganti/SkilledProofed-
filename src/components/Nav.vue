@@ -2,7 +2,9 @@
     <nav class="navbar is-info" role="navigation" aria-label="main naviation" style="min-height: 5rem;">
         <div class="navbar-brand">
             <router-link class="navbar-item is-size-4" to="/">
-            <img src="../assets/SkillProofed.png" alt="SkilledProof.png">
+                <div class="logo-container">
+                <img src="../assets/SkillProofed.png" class="logo" alt="SkilledProof.png">
+                </div>
             </router-link>
         </div>
 
@@ -22,7 +24,7 @@
 
                         <template v-else>
                             <router-link to="/sign-up" class="button is-primary"><strong>Sign up</strong></router-link>
-                            <router-link to="/log-in" class="button is-light">Log in</router-link>
+                            <router-link to="/login" class="button is-light">Log in</router-link>
                         </template>
                     </div>
                 </div>
@@ -30,3 +32,12 @@
         </div>
     </nav>
 </template>
+<style scoped>
+img.logo {
+    padding-left: 20px;
+    padding-top: 10px;
+}
+div.navbar-brand {
+    min-height: 4.25rem;
+}
+</style>

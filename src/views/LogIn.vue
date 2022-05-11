@@ -1,4 +1,5 @@
 <template>
+<!-- <router-view /> -->
   <div class="login">
     <div class="hero is-info">
       <div class="hero-body has-text-centered" style="background-color:white">
@@ -24,14 +25,14 @@
                 <div class="field">
                   <label>Email</label>
                   <div class="control">
-                    <input type="email" class="input" v-model="username" />
+                    <input type="email" class="input" v-model="form.email" />
                   </div>
                 </div>
 
                 <div class="field">
                   <label>Password</label>
                   <div class="control">
-                    <input type="password" class="input" v-model="password" />
+                    <input type="password" class="input" v-model="form.password" />
                   </div>
                 </div>
 
@@ -60,14 +61,40 @@
 </template>
 
 <script>
+import api from "../utils/api";
 import axios from "axios";
+import { useAuthStore } from "../store/auth";
 
 export default {
+  setup() {
+    const auth = useAuthStore();
+
+    return {
+      // State variables
+      user: auth.user,
+      userLoggedOutAt: auth.loggedOutAt,
+
+      // Functions
+      setUser: auth.setUser,
+      logOut: auth.logOut,
+    };
+
+    // return {
+    //   GoogleOauthIsAuthorized,
+    // };
+  },
+  components: {},
+  name: "loginForm",
   data() {
     return {
-      username: "",
-      password: "",
-      errors: [],
+      form: {
+        username: "",
+        email: "",
+        password: "",
+        confirm_password: "",
+      },
+      isInit: false,
+      isAuthorized: false,
     };
   },
   mounted() {
@@ -75,58 +102,74 @@ export default {
   },
   methods: {
     submitForm() {
-      console.log("submitForm");
+api
+        .post("/login", {
+          email: this.form.email,
+          password: this.form.password,
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.status) {
+            localStorage.setItem("user", data.login_token);
 
-      axios.defaults.headers.common["Authorization"] = "";
-
-      localStorage.removeItem("token");
-
-      this.errors = [];
-
-      if (this.username === "") {
-        this.errors.push("The username is missing!");
-      }
-
-      if (this.password === "") {
-        this.errors.push("The password is missing!");
-      }
-
-      if (!this.errors.length) {
-        const formData = {
-          username: this.username,
-          password: this.password,
-        };
-
-        axios
-          .post("token/login/", formData)
-          .then((response) => {
-            const token = response.data.auth_token;
-
-            this.$store.commit("setToken", token);
-
-            axios.defaults.headers.common["Authorization"] = "Token " + token;
-
-            localStorage.setItem("token", token);
-
-            this.$router.push("/dashboard/my-account");
-          })
-          .catch((error) => {
-            if (error.response) {
-              for (const property in error.response.data) {
-                this.errors.push(
-                  `${property}: ${error.response.data[property]}`
-                );
-              }
-
-              console.log(JSON.stringify(error.response.data));
-            } else if (error.message) {
-              this.errors.push("Something went wrong. Please try again");
-
-              console.log(JSON.stringify(error));
-            }
+            this.setUser(data.user);
+            this.$router.push("/");
+          } else {
+            // alert("wrong email or password");
+            this.$toast.open({
+              message: "Incorrect Email ID or Password!",
+              type: "error",
+              position: "top-right",
+            });
+            // app.use(VueToast, {
+            //   position: 'top'
+            // })
+          }
+        })
+        .catch((error) => {
+          // error.response.status Check status code
+          console.log(error);
+          this.$toast.open({
+            message: "Incorrect Email ID or Password!",
+            type: "error",
+            position: "top-right",
           });
+        })
+        .finally(() => {
+          // Perform action in always
+        });
+    },
+    async loginGoogle() {
+      try {
+        const googleUser = await this.$gAuth.signIn();
+        // const loggedIn = this.googleUser.isAuthorized();
+
+        if (!googleUser) {
+          return null;
+          // this.$router.push("/login");
+        }
+        console.log("getBasicProfile", googleUser.getBasicProfile());
+        console.log("getBasicProfile", googleUser.getBasicProfile().iY);
+
+        // this.isInit = this.$gAuth.isInit;
+        // this.isSignedIn = this.$gAuth.isAuthorized;
+        // if (loggedIn) {
+        //   document.getElementById("google-signin").style.visibility = 'hidden';
+        // }
+
+        this.form.username = googleUser.getBasicProfile().getEmail();
+        // const GoogleOauthIsAuthorized = inject('Vue3GoogleOauth');
+        // return {
+        //   GoogleOauthIsAuthorized,
+        // };
+        // if (GoogleOauthIsAuthorized.isAuthorized) {
+        //   document.getElementById("login-state").innerHTML("Logged In");
+        // }
+      } catch (error) {
+        console.log(error);
+        return null;
       }
     },
-  },
-};
+    },
+  };
 </script>
