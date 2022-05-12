@@ -24,10 +24,7 @@
         </div>
 
         <figure>
-          <img
-            class="column"
-            src="../assets/homedesign1.png"
-          />
+          <img class="column" src="../assets/homedesign1.png" />
         </figure>
       </div>
     </div>
@@ -98,7 +95,7 @@ export default {
   mounted() {
     console.log("mounted");
 
-    document.title = "Welcome | StudyNet";
+    document.title = "Welcome | SkillPoofed";
 
     axios.get("courses/get_frontpage_courses/").then((response) => {
       console.log(response.data);
@@ -131,11 +128,11 @@ img.column {
   margin-left: 60px;
 }
 @media screen and (max-width: 50em) {
-.left-align {
-  margin-left: 20px;
-}
-h2.subtitle {
-  font-size: 16px;
-}
+  .left-align {
+    margin-left: 20px;
+  }
+  h2.subtitle {
+    font-size: 16px;
+  }
 }
 </style>
